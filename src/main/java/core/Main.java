@@ -1,13 +1,16 @@
-package tabs;
+package core;
 
 import core.tabs.TabzPane;
 import core.tabs.TabzPaneCameraFactory;
 import core.tabs.TabzPeekAndSwitchListener;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -15,10 +18,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
+import javafx.scene.shape.ObservableFaceArray;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import org.controlsfx.control.*;
+import org.controlsfx.control.cell.ColorGridCell;
+
+import java.util.LinkedList;
+import java.util.Random;
 
 public class Main extends Application {
 
@@ -29,7 +39,7 @@ public class Main extends Application {
 
         AnchorPane pane=new AnchorPane();
 
-        Parent rooty = FXMLLoader.load(getClass().getResource("tabs.fxml"));
+        //Parent rooty = FXMLLoader.load(getClass().getResource("../tabs/tabs.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(pane, 800, 600));
         primaryStage.show();
@@ -47,13 +57,51 @@ public class Main extends Application {
         subScene.setCamera(camera);
         pane.getChildren().addAll(subScene);
 
+        addGridView(tabzPane);
+        addSegmentedButton(tabzPane);
+        addRating(tabzPane);
         addTabLevels(tabzPane);
         tabzPane.getTabs().addAll(new Button("Level 1"), new Button("Level 2"), new Button("Level 3"), new Button("Level 4"), new Button("Level 5"));
+        tabzPane.getTabs().addAll(new RangeSlider(0, 100, 10, 90));
 
         EventHandler peekListener = new TabzPeekAndSwitchListener(tabzPane);
 
         primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, peekListener);
         primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, peekListener);
+    }
+
+    private void addGridView(TabzPane tabzPane){
+        ObservableList<Color> list = FXCollections.observableList(new LinkedList<>());
+
+        Random r = new Random(System.currentTimeMillis());
+        for(int i = 0; i < 10; i++) {
+            list.add(new Color(r.nextDouble(), r.nextDouble(), r.nextDouble(), 1.0));
+        }
+
+        GridView<Color> myGrid = new GridView<>(list);
+        myGrid.setCellFactory(gridView -> new ColorGridCell());
+
+        tabzPane.getTabs().addAll(myGrid);
+    }
+
+    private void addRating(TabzPane tabzPane){
+        final Rating rating = new Rating();
+        rating.setPartialRating(true);
+        rating.setUpdateOnHover(true);
+
+        tabzPane.getTabs().addAll(rating);
+    }
+
+    private void addSegmentedButton(TabzPane tabzPane){
+        ToggleButton b1 = new ToggleButton("day");
+        ToggleButton b2 = new ToggleButton("week");
+        ToggleButton b3 = new ToggleButton("month");
+        ToggleButton b4 = new ToggleButton("year");
+
+        SegmentedButton segmentedButton = new SegmentedButton();
+        segmentedButton.getButtons().addAll(b1, b2, b3, b4);
+
+        tabzPane.getTabs().addAll(segmentedButton);
     }
 
     private void addTabLevels(TabzPane tabzPane){

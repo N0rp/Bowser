@@ -20,7 +20,7 @@ public class TabzPaneCameraFactory {
 
     private final static Rotate cameraXRotate = new Rotate(0,0,0,0,Rotate.X_AXIS);
     private final static Rotate cameraYRotate = new Rotate(0,0,0,0,Rotate.Y_AXIS);
-    private final static Translate cameraPosition = new Translate(-100,-550,-200);
+    private final static Translate cameraPosition = new Translate(-100, -400, 0);
 
     public static Camera getDefaultCamera(){
         final PerspectiveCamera camera = new PerspectiveCamera();
