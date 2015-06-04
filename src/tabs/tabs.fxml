@@ -1,0 +1,26 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.net.URL?>
+<GridPane fx:controller="tabs.TabController"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10"
+          styleClass="root">
+    <fx:define>
+        <fx:include source="../sample/sample.fxml" fx:id="sampleContent" />
+        <fx:include source="../threedee/three.fxml" fx:id="threedeeContent" />
+    </fx:define>
+
+    <TabPane>
+        <tabs>
+            <Tab fx:id="tab1" text="Foo" closable="false" content="$sampleContent"/>
+            <Tab fx:id="tab2" text="Faa" closable="false">
+                <content>
+                    <Label text="Hello World!"/>
+                </content>
+            </Tab>
+            <Tab fx:id="tab3" text="Fii" closable="false" content="$threedeeContent"/>
+        </tabs>
+    </TabPane>
+</GridPane>

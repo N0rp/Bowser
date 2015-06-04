@@ -1,0 +1,9 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
+<StackPane fx:controller="threedee.ThreeController"
+          xmlns:fx="http://javafx.com/fxml" alignment="center"
+          styleClass="root" fx:id="foo">
+
+</StackPane>
