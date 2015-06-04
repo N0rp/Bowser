@@ -6,14 +6,18 @@ import core.tabs.TabzPeekAndSwitchListener;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -26,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.controlsfx.control.*;
 import org.controlsfx.control.cell.ColorGridCell;
+import org.controlsfx.tools.Borders;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -47,27 +52,38 @@ public class Main extends Application {
         addShapes(root);
 
 
+        AnchorPane hud = new AnchorPane();
+        hud.setStyle("-fx-background-color: rgba(0, 100, 100, 0.5); -fx-background-radius: 20;");
+        Button brCorner = new Button("BR Cornery button");
+        brCorner.setTranslateX(750);
+        brCorner.setTranslateY(550);
+        hud.getChildren().addAll(new Button("foo"), brCorner);
+
+
         TabzPane tabzPane = new TabzPane();
-        tabzPane.setActiveTabIndex(0);
 
         Camera camera = TabzPaneCameraFactory.getDefaultCamera();
         Group root3D = new Group();
         root3D.getChildren().addAll(camera, tabzPane);
         SubScene subScene = new SubScene(root3D, 800, 600, true, SceneAntialiasing.BALANCED);
         subScene.setCamera(camera);
-        pane.getChildren().addAll(subScene);
+        pane.getChildren().addAll(hud, subScene);
 
+        addButtons(tabzPane);
         addGridView(tabzPane);
         addSegmentedButton(tabzPane);
         addRating(tabzPane);
         addTabLevels(tabzPane);
-        tabzPane.getTabs().addAll(new Button("Level 1"), new Button("Level 2"), new Button("Level 3"), new Button("Level 4"), new Button("Level 5"));
-        tabzPane.getTabs().addAll(new RangeSlider(0, 100, 10, 90));
+
 
         EventHandler peekListener = new TabzPeekAndSwitchListener(tabzPane);
 
         primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, peekListener);
         primaryStage.addEventFilter(KeyEvent.KEY_RELEASED, peekListener);
+        primaryStage.addEventFilter(ScrollEvent.SCROLL, peekListener);
+
+        tabzPane.setActiveTabIndex(0);
+
     }
 
     private void addGridView(TabzPane tabzPane){
@@ -81,7 +97,27 @@ public class Main extends Application {
         GridView<Color> myGrid = new GridView<>(list);
         myGrid.setCellFactory(gridView -> new ColorGridCell());
 
-        tabzPane.getTabs().addAll(myGrid);
+        tabzPane.getTabs().addAll( Borders.wrap(myGrid).lineBorder().buildAll());
+    }
+
+    private void addButtons(TabzPane tabzPane){
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.getChildren().addAll(new Button("Level 1"));
+        anchorPane.prefHeight(500);
+        Button b3 = new Button("Level 3");
+        Label l4 = new Label ("Level 4");
+
+        tabzPane.getTabs().addAll(Borders.wrap(anchorPane).lineBorder().buildAll());
+        tabzPane.getTabs().addAll(Borders.wrap(new Button("Level 2")).lineBorder().buildAll(),
+                b3, l4, new Button("Level 5"));
+        tabzPane.getTabs().addAll(new RangeSlider(0, 100, 10, 90));
+
+        b3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                l4.setText("Clicked 3");
+            }
+        });
     }
 
     private void addRating(TabzPane tabzPane){

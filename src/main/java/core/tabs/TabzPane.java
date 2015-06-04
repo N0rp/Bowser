@@ -3,9 +3,13 @@ package core.tabs;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 
@@ -47,7 +51,7 @@ public class TabzPane extends AnchorPane {
     private int activeTabIndex = 0;
     private int tabLevelZDistance = 200;
 
-    private final int peekYTranslate = 150;
+    private final int peekYTranslate = 300;
 
     private final boolean animateActiveTabTransition = true;
 
@@ -66,34 +70,46 @@ public class TabzPane extends AnchorPane {
             Node tab = getTabs().get(i);
             if(i < activeTabIndex){
                 tab.setVisible(false);
+                tab.setPickOnBounds(false);
             }else if(i == activeTabIndex){
-                tab.setVisible(true);
                 if(transitionDown) {
                     tab.setTranslateZ(-tabLevelZDistance * 2);
                 }
                 transitionZ(tab, 0, animateTransition);
+
+                tab.setVisible(true);
                 tab.requestFocus();
+                tab.setPickOnBounds(true);
             }else{
                 tabsFoundAfterIndex++;
-                tab.setVisible(true);
                 transitionZ(tab, tabLevelZDistance * tabsFoundAfterIndex, animateTransition);
+                tab.setVisible(true);
+                tab.setPickOnBounds(true);
             }
         }
     }
 
     public void startPeekBehindActive(boolean animatePeek){
         Node activeTab = getTabs().get(getActiveTabIndex());
+        //activeTab.setPickOnBounds(false);
+        activeTab.setMouseTransparent(true);
         transitionY(activeTab, peekYTranslate, animatePeek);
+
+        // if there is a next tab
         if(getActiveTabIndex() + 1 < getTabs().size()){
             Node nextTab = getTabs().get(getActiveTabIndex() + 1);
             nextTab.requestFocus();
+            //nextTab.setPickOnBounds(true);
         }
     }
 
     public void stopPeekBehindActive(boolean animatePeek) {
         Node activeTab = getTabs().get(getActiveTabIndex());
         transitionY(activeTab, 0, animatePeek);
+
         activeTab.requestFocus();
+        //activeTab.setPickOnBounds(true);
+        activeTab.setMouseTransparent(false);
     }
 
     private void transitionY(Node node, int translateByY, boolean animate){

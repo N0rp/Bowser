@@ -1,17 +1,19 @@
 package core.tabs;
 
 import javafx.animation.TranslateTransition;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.util.Duration;
 
 
 /**
  * Created by Richard on 6/4/2015.
  */
-public class TabzPeekAndSwitchListener implements EventHandler<KeyEvent>{
+public class TabzPeekAndSwitchListener implements EventHandler<Event>{
 
     private TabzPane pane;
 
@@ -22,7 +24,15 @@ public class TabzPeekAndSwitchListener implements EventHandler<KeyEvent>{
     }
 
     @Override
-    public void handle(KeyEvent event) {
+    public void handle(Event event) {
+        if(event instanceof KeyEvent){
+            handleKey((KeyEvent) event);
+        }else if(event instanceof ScrollEvent){
+            handleScroll((ScrollEvent) event);
+        }
+    }
+
+    private void handleKey(KeyEvent event){
         event.consume();
         if(event.getCode() == KeyCode.SPACE) {
             handlePeek(event);
@@ -30,6 +40,15 @@ public class TabzPeekAndSwitchListener implements EventHandler<KeyEvent>{
             handleHierarchyUp(event);
         }else if(event.getCode() == KeyCode.DOWN){
             handleHierarchyDown(event);
+        }
+    }
+
+    private void handleScroll(ScrollEvent event){
+        event.consume();
+        if(event.getDeltaY() > 0) {
+            pane.setActiveTabIndex(pane.getActiveTabIndex() + 1);
+        }else {
+            pane.setActiveTabIndex(pane.getActiveTabIndex() - 1);
         }
     }
 
