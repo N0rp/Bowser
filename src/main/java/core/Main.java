@@ -37,7 +37,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        AnchorPane pane=new AnchorPane();
+        AnchorPane pane = new AnchorPane();
 
         //Parent rooty = FXMLLoader.load(getClass().getResource("../tabs/tabs.fxml"));
         primaryStage.setTitle("Hello World");
