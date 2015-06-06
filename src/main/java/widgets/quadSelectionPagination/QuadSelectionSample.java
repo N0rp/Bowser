@@ -2,13 +2,9 @@ package widgets.quadSelectionPagination;
 
 import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Finger;
-import com.leapmotion.leap.Hand;
-import com.sun.javafx.robot.FXRobot;
-import com.sun.javafx.robot.FXRobotFactory;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -17,8 +13,8 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import leap.LeapEvent;
 import leap.LeapHand;
-import leap.LeapHandState;
 import leap.RichLeapListener;
+import widgets.handinfo.HandInfoControl;
 
 /**
  * Created by Richard on 6/6/2015.
@@ -31,8 +27,8 @@ public class QuadSelectionSample  extends Application {
     private Label rightHandText = new Label();
     private Circle leftHandCircle = new Circle(10, Color.GREEN);
     private Circle rightHandCircle = new Circle(10, Color.RED);
-    private Label leftHandHud = new Label();
-    private Label rightHandHud = new Label();
+    private HandInfoControl leftHandHud;
+    private HandInfoControl rightHandHud;
 
     public static void main(String[] params){
         launch(params);
@@ -52,6 +48,11 @@ public class QuadSelectionSample  extends Application {
         primaryStage.setScene(new Scene(rootPane, appWidth, appHeight));
         primaryStage.show();
 
+        leftHandHud = new HandInfoControl();
+        leftHandHud.setIsLeftHand(true);
+        rightHandHud =  new HandInfoControl();
+        rightHandHud.setIsLeftHand(false);
+
         leftHandHud.setTranslateX(0);
         leftHandHud.setTranslateY(500);
 
@@ -61,9 +62,6 @@ public class QuadSelectionSample  extends Application {
         QuadSelectionPane quadSelection = FXMLLoader.load(getClass().getResource("/widgets/quadSelectionPagination/quadSelection.fxml"));
         rootPane.getChildren().addAll(quadSelection, leftHandCircle, rightHandCircle,
                 leftHandText, rightHandText, leftHandHud, rightHandHud);
-
-        FXRobot robot = FXRobotFactory.createRobot(primaryStage.getScene());
-
 
         listener.doneListProperty().addListener((ov, b, b1)->{
             if(listener.getLeftHand() != null) {
@@ -79,7 +77,7 @@ public class QuadSelectionSample  extends Application {
         });
     }
 
-    private void setHandIndicator(Circle handCircle, Label handText, Label hud, LeapHand hand){
+    private void setHandIndicator(Circle handCircle, Label handText, final HandInfoControl hudController, final LeapHand hand){
         final int palmX = (int)hand.palmPositionNormalized().getX();
         final int palmY = (int)hand.palmPositionNormalized().getY();
         final int extendedFingers = hand.getFingers().extended().count();
@@ -88,18 +86,29 @@ public class QuadSelectionSample  extends Application {
         switch (hand.getHandState()){
             case PINCH:
                 Finger pinchingFinger = hand.getPinchingFinger();
-                text = pinchingFinger.type()+"";
+                text = "Pinch: " + pinchingFinger.type()+"";
                 break;
             case FIST:
-                text = "F"; // Fist
+                text = "Fist"; // Fist
                 break;
             case NORMAL:
-                text = extendedFingers + "";
+                text = "Normal: "+extendedFingers + "";
+                break;
+            case SIGN:
+                text = "Sign";
+                break;
+            case SIGN_ONE_MISSING:
+                text = "Sign: "+hand.getMissingFingers();
+                break;
+            case SIGN_OK:
+                text = "OK";
+                break;
+            case SIGN_ROCK:
+                text = "Rock";
                 break;
             default:
                 text = "I";
         }
-
         Platform.runLater(() -> {
             handCircle.setCenterX(palmX);
             handCircle.setCenterY(palmY);
@@ -107,7 +116,8 @@ public class QuadSelectionSample  extends Application {
             handText.setTranslateY(palmY - (handCircle.getRadius() / 2));
             handText.setText(text);
 
-            hud.setText("Grab Strenght: "+hand.getGrabStrenght()+"\n"+"Pinch Strength: "+hand.getPinchStrength());
+
+            hudController.updateHand(hand);
         });
     }
 

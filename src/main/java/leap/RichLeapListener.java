@@ -43,12 +43,12 @@ public class RichLeapListener extends Listener {
                             leftHand = new LeapHand(h, frame.interactionBox(), appWidth, appHeight);
                         }else if(h.isRight()){
                             rightHand = new LeapHand(h, frame.interactionBox(), appWidth, appHeight);
+                            LeapHandState handState = rightHand.getHandState();
                         }
                     }
                 }
             }
         }
-
         doneList.set(true);
     }
 
