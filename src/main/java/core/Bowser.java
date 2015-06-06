@@ -32,7 +32,7 @@ public class Bowser extends Application {
     }
 
     private SubScene createTabzScene(Stage primaryStage) throws IOException {
-        TabzPane tabzPane = FXMLLoader.load(getClass().getResource("/explorer/explorer.fxml"));
+        TabzPane tabzPane = FXMLLoader.load(getClass().getResource("/widgets/explorer/explorer.fxml"));
         tabzPane.setActiveTabIndex(0);
 
         Camera camera = TabzPaneCameraFactory.getDefaultCamera();
