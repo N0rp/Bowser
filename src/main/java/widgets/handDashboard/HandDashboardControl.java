@@ -1,25 +1,14 @@
-package widgets.handinfo;
+package widgets.handDashboard;
 
-import com.leapmotion.leap.Hand;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import leap.LeapHand;
 
 import java.io.IOException;
@@ -27,15 +16,15 @@ import java.io.IOException;
 /**
  * Created by Richard on 6/6/2015.
  */
-public class HandInfoControl extends VBox{
+public class HandDashboardControl extends HBox{
 
     public boolean getIsLeftHand() {
         return isLeftHand.get();
     }
 
     public void setIsLeftHand(boolean isLeftHand) {
-        System.out.println("isLeftHand");
         this.isLeftHand.set(isLeftHand);
+        paw.setIsLeftHand(isLeftHand);
     }
 
     public BooleanProperty isLeftHandProperty() {
@@ -43,20 +32,24 @@ public class HandInfoControl extends VBox{
     }
 
     private ColorAdjust handColorAdjust;
-    private Label infoLabel = new Label();
-    private ProgressIndicator grabStrength = new ProgressIndicator();
-    private ProgressIndicator pinchStrength = new ProgressIndicator();
-
-    private final int imageWidth = 50;
+    private ColorAdjust handGestureAdjust;
 
     @FXML
-    private ImageView handImageView;
+    private ProgressIndicator grabIndicator;
+    @FXML
+    private ProgressIndicator pinchIndicator;
+    @FXML
+    private ImageView handGestureView;
+    @FXML
+    private PawControl paw;
 
     @FXML
     private BooleanProperty isLeftHand = new SimpleBooleanProperty(true);
 
-    public HandInfoControl(){
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/widgets/handinfo/handinfo.fxml"));
+    private final int imageWidth = 50;
+
+    public HandDashboardControl(){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/widgets/handDashboard/handDashboard.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 
@@ -71,31 +64,29 @@ public class HandInfoControl extends VBox{
     @FXML
     private void initialize() {
         handColorAdjust = new ColorAdjust();
-        setHandImageView("/icons/touchGestureIcons/Number-5.png", handImageView, handColorAdjust);
+        handGestureAdjust = new ColorAdjust();
+        setHandImageView("/icons/touchGestureIcons/Pinch.png", handGestureView, handGestureAdjust);
         isLeftHand.addListener(observable -> {
-            setImageScale(isLeftHand.getValue());
+            setImageScale(handGestureView, isLeftHand.getValue());
         });
+
+        grabIndicator.setProgress(0);
+        pinchIndicator.setProgress(0);
     }
 
-    private void setImageScale(boolean isLeftHand){
+    private void setImageScale(ImageView imageView, boolean isLeftHand){
         int scale = 1;
         if(!isLeftHand){
             scale *= -1;
         }
-        System.out.println("Listeing: "+scale);
-        handImageView.setScaleX(scale);
+        imageView.setScaleX(scale);
     }
 
     public void updateHand(LeapHand hand){
-        infoLabel.setText("Grab Strenght: "+hand.getGrabStrenght()+"\n"+"Pinch Strength: "+hand.getPinchStrength());
-    }
+        grabIndicator.setProgress(hand.getGrabStrenght());
+        pinchIndicator.setProgress(hand.getPinchStrength());
 
-    private VBox createStrengthView(){
-        VBox vBox = new VBox();
-
-        HBox grabBox = new HBox();
-
-        return vBox;
+        paw.updatePaw(hand);
     }
 
     private ImageView setHandImageView(String imagePath, ImageView handImageView, ColorAdjust handColorAdjust){
@@ -115,8 +106,6 @@ public class HandInfoControl extends VBox{
         handImageView.setSmooth(true);
         handImageView.setCache(true);
         handImageView.setEffect(handColorAdjust);
-
-        setImageScale(isLeftHand.getValue());
 
         return handImageView;
     }

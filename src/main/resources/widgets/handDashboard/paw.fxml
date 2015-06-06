@@ -1,0 +1,16 @@
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.shape.Circle?>
+<fx:root type="javafx.scene.layout.AnchorPane"
+          xmlns:fx="http://javafx.com/fxml">
+    <Circle fx:id="index" radius="2" fill="red" centerX="5" centerY="0"></Circle>
+    <Circle fx:id="middle" radius="2" fill="red" centerX="10" centerY="0"></Circle>
+    <Circle fx:id="ring" radius="2" fill="red" centerX="15" centerY="0"></Circle>
+    <Circle fx:id="pinky" radius="2" fill="red" centerX="20" centerY="0"></Circle>
+    <Circle fx:id="thumbLeft" radius="2" fill="red" centerX="0" centerY="14"></Circle>
+    <Circle fx:id="thumbRight" radius="2" fill="red" centerX="28" centerY="14"></Circle>
+    <Circle fx:id="palm" radius="10" fill="red" centerX="14" centerY="15"></Circle>
+</fx:root>

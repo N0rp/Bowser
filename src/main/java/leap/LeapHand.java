@@ -135,7 +135,7 @@ public class LeapHand {
                     case TYPE_RING: fingerRing = f; break;
                     case TYPE_PINKY: fingerPinky = f;  break;
                 }
-                if(!f.isExtended()){
+                if(f.isExtended()){
                     missingFingers.remove(f.type());
                 }
             }

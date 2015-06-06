@@ -1,0 +1,21 @@
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import widgets.handDashboard.PawControl?>
+<fx:root type="javafx.scene.layout.HBox"
+          xmlns:fx="http://javafx.com/fxml">
+    <PawControl fx:id="paw"></PawControl>
+    <VBox>
+        <HBox>
+            <Label text="Grab: "></Label>
+            <ProgressIndicator fx:id="grabIndicator"></ProgressIndicator>
+        </HBox>
+        <HBox>
+            <Label text="Pinch: "></Label>
+            <ProgressIndicator fx:id="pinchIndicator"></ProgressIndicator>
+        </HBox>
+    </VBox>
+    <ImageView fx:id="handGestureView"></ImageView>
+</fx:root>

@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import leap.LeapEvent;
 import leap.LeapHand;
 import leap.RichLeapListener;
-import widgets.handinfo.HandInfoControl;
+import widgets.handDashboard.HandDashboardControl;
 
 /**
  * Created by Richard on 6/6/2015.
@@ -27,8 +27,8 @@ public class QuadSelectionSample  extends Application {
     private Label rightHandText = new Label();
     private Circle leftHandCircle = new Circle(10, Color.GREEN);
     private Circle rightHandCircle = new Circle(10, Color.RED);
-    private HandInfoControl leftHandHud;
-    private HandInfoControl rightHandHud;
+    private HandDashboardControl leftHandHud;
+    private HandDashboardControl rightHandHud;
 
     public static void main(String[] params){
         launch(params);
@@ -48,12 +48,12 @@ public class QuadSelectionSample  extends Application {
         primaryStage.setScene(new Scene(rootPane, appWidth, appHeight));
         primaryStage.show();
 
-        leftHandHud = new HandInfoControl();
+        leftHandHud = new HandDashboardControl();
         leftHandHud.setIsLeftHand(true);
-        rightHandHud =  new HandInfoControl();
+        rightHandHud =  new HandDashboardControl();
         rightHandHud.setIsLeftHand(false);
 
-        leftHandHud.setTranslateX(0);
+        leftHandHud.setTranslateX(10);
         leftHandHud.setTranslateY(500);
 
         rightHandHud.setTranslateX(650);
@@ -77,7 +77,7 @@ public class QuadSelectionSample  extends Application {
         });
     }
 
-    private void setHandIndicator(Circle handCircle, Label handText, final HandInfoControl hudController, final LeapHand hand){
+    private void setHandIndicator(Circle handCircle, Label handText, final HandDashboardControl hudController, final LeapHand hand){
         final int palmX = (int)hand.palmPositionNormalized().getX();
         final int palmY = (int)hand.palmPositionNormalized().getY();
         final int extendedFingers = hand.getFingers().extended().count();
