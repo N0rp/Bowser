@@ -1,14 +1,13 @@
 package core;
 
-import core.tabs.TabzPane;
-import core.tabs.TabzPaneCameraFactory;
-import core.tabs.TabzPeekAndSwitchListener;
+import widgets.tabs.TabzPane;
+import widgets.tabs.TabzPaneCameraFactory;
+import widgets.tabs.TabzPeekAndSwitchListener;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,17 +16,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.ObservableFaceArray;
 import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.controlsfx.control.*;
 import org.controlsfx.control.cell.ColorGridCell;
 import org.controlsfx.tools.Borders;
@@ -35,7 +29,7 @@ import org.controlsfx.tools.Borders;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class Main extends Application {
+public class Playground extends Application {
 
     private final Group root = new Group();
 

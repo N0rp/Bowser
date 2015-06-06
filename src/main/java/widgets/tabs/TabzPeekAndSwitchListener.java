@@ -1,13 +1,10 @@
-package core.tabs;
+package widgets.tabs;
 
-import javafx.animation.TranslateTransition;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.util.Duration;
 
 
 /**

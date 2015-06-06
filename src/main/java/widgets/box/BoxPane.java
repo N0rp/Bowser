@@ -1,4 +1,4 @@
-package core.box;
+package widgets.box;
 
 /**
  * Created by Richard on 6/4/2015.

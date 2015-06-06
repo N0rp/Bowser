@@ -1,15 +1,9 @@
-package core.tabs;
+package widgets.tabs;
 
 import javafx.animation.TranslateTransition;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TabPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 

@@ -1,4 +1,4 @@
-package core.tabs;
+package widgets.tabs;
 
 import javafx.scene.Camera;
 import javafx.scene.PerspectiveCamera;

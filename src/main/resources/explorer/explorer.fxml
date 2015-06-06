@@ -1,0 +1,13 @@
+<?import widgets.tabs.TabzPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Button?>
+<TabzPane fx:controller="explorer.ExplorerController"
+          xmlns:fx="http://javafx.com/fxml"
+          styleClass="root">
+    <StackPane>
+        <Button text="Level 1"/>
+    </StackPane>
+    <StackPane>
+        <Button text="Level 2"/>
+    </StackPane>
+</TabzPane>
