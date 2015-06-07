@@ -1,4 +1,4 @@
-package leap;
+package leap.gesture;
 
 /**
  * Created by Richard on 6/6/2015.
@@ -6,7 +6,7 @@ package leap;
 public enum LeapHandState {
     INVALID,
     /** All five fingers shown **/
-    NORMAL,
+    UNKNOWN,
     FIST,
     PINCH,
     /** Hand is missing at least one finger **/

@@ -2,19 +2,27 @@ package widgets.quadSelectionPagination;
 
 import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Finger;
+import core.UiUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import leap.LeapEvent;
-import leap.LeapHand;
+import leap.gesture.LeapHand;
 import leap.RichLeapListener;
+import leap.gesture.LeapMagic;
 import widgets.handDashboard.HandDashboardControl;
+import widgets.handDashboard.MagicDashboardControl;
 
 /**
  * Created by Richard on 6/6/2015.
@@ -29,6 +37,7 @@ public class QuadSelectionSample  extends Application {
     private Circle rightHandCircle = new Circle(10, Color.RED);
     private HandDashboardControl leftHandHud;
     private HandDashboardControl rightHandHud;
+    private MagicDashboardControl magicDashboard;
 
     public static void main(String[] params){
         launch(params);
@@ -50,30 +59,49 @@ public class QuadSelectionSample  extends Application {
 
         leftHandHud = new HandDashboardControl();
         leftHandHud.setIsLeftHand(true);
-        rightHandHud =  new HandDashboardControl();
+        leftHandHud.setPawColor(Color.GREEN);
+        rightHandHud = new HandDashboardControl();
         rightHandHud.setIsLeftHand(false);
+        rightHandHud.setPawColor(Color.RED);
 
-        leftHandHud.setTranslateX(10);
-        leftHandHud.setTranslateY(500);
+        magicDashboard = new MagicDashboardControl();
 
-        rightHandHud.setTranslateX(650);
-        rightHandHud.setTranslateY(500);
+        AnchorPane.setBottomAnchor(leftHandHud, 8.0);
+        AnchorPane.setLeftAnchor(leftHandHud, 5.0);
+        AnchorPane.setBottomAnchor(rightHandHud, 8.0);
+        AnchorPane.setRightAnchor(rightHandHud, 5.0);
+        AnchorPane.setTopAnchor(magicDashboard, 8.0);
+        AnchorPane.setRightAnchor(magicDashboard, 8.0);
 
         QuadSelectionPane quadSelection = FXMLLoader.load(getClass().getResource("/widgets/quadSelectionPagination/quadSelection.fxml"));
         rootPane.getChildren().addAll(quadSelection, leftHandCircle, rightHandCircle,
-                leftHandText, rightHandText, leftHandHud, rightHandHud);
+                leftHandText, rightHandText, leftHandHud, rightHandHud, magicDashboard);
 
-        listener.doneListProperty().addListener((ov, b, b1)->{
-            if(listener.getLeftHand() != null) {
-                setHandIndicator(leftHandCircle, leftHandText, leftHandHud, listener.getLeftHand());
-            }
-            if(listener.getRightHand() != null) {
-                quadSelection.getColorAdjust().setSaturation(listener.getRightHand().getPinchStrength());
-                setHandIndicator(rightHandCircle, rightHandText, rightHandHud, listener.getRightHand());
-            }
+        listener.doneListProperty().addListener((observable, oldValue, newValue)->{
+            final LeapMagic leapMagic = listener.getLeapMagic();
+            if(leapMagic != null) {
+                final LeapHand leftHand = leapMagic.getLeftHand();
+                final LeapHand rightHand = leapMagic.getRightHand();
 
-            LeapEvent myEvent = new LeapEvent(LeapEvent.LEAP_ALL, listener.getLeftHand(), listener.getRightHand());
-            quadSelection.fireEvent(myEvent);
+                if (leftHand != null) {
+                    setHandIndicator(leftHandCircle, leftHandText, leftHandHud, leftHand);
+                }
+                if (rightHand != null) {
+                    setHandIndicator(rightHandCircle, rightHandText, rightHandHud, rightHand);
+                    Node target = UiUtil.getTarget(quadSelection,
+                            rightHand.palmPositionNormalized().getX(), rightHand.palmPositionNormalized().getY());
+                    if(target != null){
+                        Platform.runLater(() -> {
+                            LeapEvent leapEvent = new LeapEvent(listener, target, LeapEvent.LEAP_ALL, leapMagic);
+                            target.fireEvent(leapEvent);
+                        });
+                    }
+                }
+
+                Platform.runLater(() -> {
+                    magicDashboard.updateHand(leapMagic);
+                });
+            }
         });
     }
 
@@ -91,8 +119,8 @@ public class QuadSelectionSample  extends Application {
             case FIST:
                 text = "Fist"; // Fist
                 break;
-            case NORMAL:
-                text = "Normal: "+extendedFingers + "";
+            case UNKNOWN:
+                text = "Unknown: "+extendedFingers + "";
                 break;
             case SIGN:
                 text = "Sign";
@@ -115,7 +143,6 @@ public class QuadSelectionSample  extends Application {
             handText.setTranslateX(palmX - (handCircle.getRadius() / 2));
             handText.setTranslateY(palmY - (handCircle.getRadius() / 2));
             handText.setText(text);
-
 
             hudController.updateHand(hand);
         });

@@ -4,6 +4,9 @@ package leap;
 import com.leapmotion.leap.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import leap.gesture.LeapHand;
+import leap.gesture.LeapHandState;
+import leap.gesture.LeapMagic;
 
 /**
  *
@@ -11,10 +14,23 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public class RichLeapListener extends Listener {
 
+    /**
+     *
+     * @return the leap magic or <code>null</code> if none was found
+     */
+    public LeapMagic getLeapMagic(){
+        return leapMagic;
+    }
+
+    public BooleanProperty doneListProperty() {
+        return doneList;
+    }
+
     private final BooleanProperty doneList = new SimpleBooleanProperty(false);
 
     private LeapHand leftHand = null;
     private LeapHand rightHand = null;
+    private LeapMagic leapMagic = null;
 
     private int appWidth;
     private int appHeight;
@@ -29,6 +45,7 @@ public class RichLeapListener extends Listener {
         Frame frame = controller.frame();
         leftHand = null;
         rightHand = null;
+        leapMagic = null;
 
         doneList.set(false);
         if (!frame.hands().isEmpty()) {
@@ -43,33 +60,13 @@ public class RichLeapListener extends Listener {
                             leftHand = new LeapHand(h, frame.interactionBox(), appWidth, appHeight);
                         }else if(h.isRight()){
                             rightHand = new LeapHand(h, frame.interactionBox(), appWidth, appHeight);
-                            LeapHandState handState = rightHand.getHandState();
                         }
                     }
                 }
+                leapMagic = new LeapMagic(leftHand, rightHand);
             }
         }
         doneList.set(true);
-    }
-
-    /**
-     *
-     * @return the left hand or <code>null</code> if none was found
-     */
-    public LeapHand getLeftHand(){
-        return leftHand;
-    }
-
-    /**
-     *
-     * @return the right hand or <code>null</code> if none was found
-     */
-    public LeapHand getRightHand(){
-        return rightHand;
-    }
-
-    public BooleanProperty doneListProperty() {
-        return doneList;
     }
 
 }

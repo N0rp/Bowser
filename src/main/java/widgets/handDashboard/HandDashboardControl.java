@@ -1,50 +1,79 @@
 package widgets.handDashboard;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import leap.LeapHand;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import leap.gesture.LeapHand;
 
 import java.io.IOException;
 
 /**
  * Created by Richard on 6/6/2015.
  */
-public class HandDashboardControl extends HBox{
-
+public class HandDashboardControl extends VBox {
+    /*
+        Getter/Setter
+    */
     public boolean getIsLeftHand() {
         return isLeftHand.get();
     }
 
     public void setIsLeftHand(boolean isLeftHand) {
         this.isLeftHand.set(isLeftHand);
-        paw.setIsLeftHand(isLeftHand);
     }
 
     public BooleanProperty isLeftHandProperty() {
         return isLeftHand;
     }
 
-    private ColorAdjust handColorAdjust;
-    private ColorAdjust handGestureAdjust;
+    public float getCircleRadius() {
+        return circleRadius.get();
+    }
+
+    public FloatProperty circleRadiusProperty() {
+        return circleRadius;
+    }
+
+    public void setCircleRadius(float circleRadius) {
+        this.circleRadius.set(circleRadius);
+    }
+
+    public Paint getPawColor() {
+        return pawColor.get();
+    }
+
+    public ObjectProperty<Paint> pawColorProperty() {
+        return pawColor;
+    }
+
+    public void setPawColor(Paint pawColor) {
+        this.pawColor.set(pawColor);
+    }
+    /*
+        Properties
+     */
+    private BooleanProperty isLeftHand = new SimpleBooleanProperty(true);
+    private FloatProperty circleRadius = new SimpleFloatProperty(15);
+    private final ObjectProperty<Paint> pawColor = new SimpleObjectProperty<Paint>(this, "pawColor", Color.RED);
+
+    /*
+        FXML
+     */
 
     @FXML
     private ProgressIndicator grabIndicator;
     @FXML
     private ProgressIndicator pinchIndicator;
     @FXML
-    private ImageView handGestureView;
+    private ProgressIndicator confidenceIndicator;
+    @FXML
+    private ProgressIndicator rollAngle;
     @FXML
     private PawControl paw;
-
-    @FXML
-    private BooleanProperty isLeftHand = new SimpleBooleanProperty(true);
 
     private final int imageWidth = 50;
 
@@ -63,51 +92,36 @@ public class HandDashboardControl extends HBox{
 
     @FXML
     private void initialize() {
-        handColorAdjust = new ColorAdjust();
-        handGestureAdjust = new ColorAdjust();
-        setHandImageView("/icons/touchGestureIcons/Pinch.png", handGestureView, handGestureAdjust);
-        isLeftHand.addListener(observable -> {
-            setImageScale(handGestureView, isLeftHand.getValue());
-        });
-
         grabIndicator.setProgress(0);
         pinchIndicator.setProgress(0);
+        confidenceIndicator.setProgress(0);
+        rollAngle.setProgress(0);
+
+        initListeners();
     }
 
-    private void setImageScale(ImageView imageView, boolean isLeftHand){
-        int scale = 1;
-        if(!isLeftHand){
-            scale *= -1;
-        }
-        imageView.setScaleX(scale);
+    private void initListeners(){
+        isLeftHand.addListener((observable, oldValue, newValue) -> {
+            paw.setIsLeftHand(newValue);
+        });
+
+        circleRadius.addListener((observable, oldValue, newValue) -> {
+            paw.setCircleRadius(newValue.floatValue());
+        });
+
+        pawColor.addListener((observable, oldValue, newValue) -> {
+            paw.setPawColor(newValue);
+        });
     }
 
     public void updateHand(LeapHand hand){
         grabIndicator.setProgress(hand.getGrabStrenght());
         pinchIndicator.setProgress(hand.getPinchStrength());
+        confidenceIndicator.setProgress(hand.getConfidence());
+        rollAngle.setProgress(Math.abs(hand.getPalmRoll()));
 
         paw.updatePaw(hand);
     }
 
-    private ImageView setHandImageView(String imagePath, ImageView handImageView, ColorAdjust handColorAdjust){
-        // load the image
-        Image handImage = new Image(getClass().getResourceAsStream(imagePath));
-        // resizes the image to have width of 100 while preserving the ratio and using
-        // higher quality filtering method; this ImageView is also cached to
-        // improve performance
-        handColorAdjust.setContrast(1);
-        handColorAdjust.setHue(0.1);
-        handColorAdjust.setBrightness(1);
-        handColorAdjust.setSaturation(1);
-
-        handImageView.setImage(handImage);
-        handImageView.setFitWidth(imageWidth);
-        handImageView.setPreserveRatio(true);
-        handImageView.setSmooth(true);
-        handImageView.setCache(true);
-        handImageView.setEffect(handColorAdjust);
-
-        return handImageView;
-    }
 
 }

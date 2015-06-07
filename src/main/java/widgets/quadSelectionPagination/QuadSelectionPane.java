@@ -2,6 +2,7 @@ package widgets.quadSelectionPagination;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.effect.ColorAdjust;
@@ -23,8 +24,6 @@ public class QuadSelectionPane extends BorderPane {
 
     private ObservableList<ToggleButton> children = FXCollections.emptyObservableList();
 
-    private ColorAdjust colorAdjust;
-
     public QuadSelectionPane(){
         ToggleButton b1 = new ToggleButton("day");
         ToggleButton b2 = new ToggleButton("week");
@@ -38,36 +37,29 @@ public class QuadSelectionPane extends BorderPane {
         centerPane.getChildren().addAll(segmentedButton);
         setCenter(centerPane);
 
-        // load the image
-        URL imageUrl = getClass().getResource("/icons/touchGestureIcons/Pinch.png");
-        String imagePath = imageUrl.getPath();
-        Image image = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Pinch.png"));
-        // resizes the image to have width of 100 while preserving the ratio and using
-        // higher quality filtering method; this ImageView is also cached to
-        // improve performance
-        colorAdjust = new ColorAdjust();
-        colorAdjust.setContrast(1);
-        colorAdjust.setHue(0.1);
-        colorAdjust.setBrightness(0.5);
-        colorAdjust.setSaturation(1);
-
-        ImageView iv2 = new ImageView();
-        iv2.setImage(image);
-        iv2.setFitWidth(50);
-        iv2.setPreserveRatio(true);
-        iv2.setSmooth(true);
-        iv2.setCache(true);
-        iv2.setY(100);
-        iv2.setEffect(colorAdjust);
-
-        centerPane.getChildren().addAll(iv2);
-
-        this.addEventHandler(LeapEvent.LEAP_ALL, event -> {
+        this.addEventFilter(LeapEvent.LEAP_ALL, event -> {
 
         });
+
+        b1.addEventFilter(LeapEvent.LEAP_ALL, new ToggleEventHandler(b1));
+        b2.addEventHandler(LeapEvent.LEAP_ALL, new ToggleEventHandler(b2));
+        b3.addEventFilter(LeapEvent.LEAP_ALL, new ToggleEventHandler(b3));
+        b4.addEventHandler(LeapEvent.LEAP_ALL, new ToggleEventHandler(b4));
     }
 
-    public ColorAdjust getColorAdjust(){
-        return colorAdjust;
+    public class ToggleEventHandler implements EventHandler<LeapEvent>{
+
+        private ToggleButton button;
+
+        public ToggleEventHandler(ToggleButton button){
+            this.button = button;
+        }
+
+        @Override
+        public void handle(LeapEvent event) {
+            button.requestFocus();
+        }
     }
+
+
 }

@@ -15,24 +15,36 @@
         <Double fx:id="RADIUS_SMALL" fx:value="5"/>
         <Color fx:id="COLOR" fx:value="red"/>
     </fx:define>
-    <HBox spacing="5" alignment="CENTER">
-        <Circle fx:id="finger1" radius="$RADIUS_SMALL" fill="red"></Circle>
-        <Circle fx:id="finger2" radius="$RADIUS_SMALL" fill="red" ></Circle>
-        <Circle fx:id="finger3" radius="$RADIUS_SMALL" fill="red"></Circle>
-        <Circle fx:id="finger4" radius="$RADIUS_SMALL" fill="red"></Circle>
+    <HBox fx:id="fingerBox" spacing="5" alignment="CENTER">
+        <VBox>
+            <Label fx:id="finger1Label" text="10" style="-fx-font-size:10;"></Label>
+            <Circle fx:id="finger1" radius="$RADIUS_SMALL" fill="red"/>
+        </VBox>
+        <VBox>
+            <Label fx:id="finger2Label" text="5" style="-fx-font-size:10;"></Label>
+            <Circle fx:id="finger2" radius="$RADIUS_SMALL" fill="red"/>
+        </VBox>
+        <VBox>
+            <Label fx:id="finger3Label" text="5" style="-fx-font-size:10;"></Label>
+            <Circle fx:id="finger3" radius="$RADIUS_SMALL" fill="red"/>
+        </VBox>
+        <VBox>
+            <Label fx:id="finger4Label" text="5" style="-fx-font-size:10;"></Label>
+            <Circle fx:id="finger4" radius="$RADIUS_SMALL" fill="red"/>
+        </VBox>
     </HBox>
     <HBox>
         <VBox alignment="CENTER">
-            <Circle fx:id="thumbLeft" radius="$RADIUS_SMALL" fill="red"></Circle>
+            <Circle fx:id="thumbLeft" radius="$RADIUS_SMALL" fill="red"/>
         </VBox>
         <StackPane translateX="5" translateY="5">
-            <Circle fx:id="palm" radius="$RADIUS_BIG" fill="red"></Circle>
-            <ImageView fx:id="handGestureView"></ImageView>
-            <Label fx:id="handGestureLabel" text="None"></Label>
+            <Circle fx:id="palm" radius="$RADIUS_BIG" fill="red"/>
+            <ImageView fx:id="handGestureView"/>
+            <Label fx:id="handGestureLabel" text="None"/>
         </StackPane>
         <VBox alignment="CENTER">
             <padding><Insets top="0" right="0" bottom="0" left="5"/></padding>
-            <Circle fx:id="thumbRight" radius="$RADIUS_SMALL" fill="red"></Circle>
+            <Circle fx:id="thumbRight" radius="$RADIUS_SMALL" fill="red"/>
         </VBox>
     </HBox>
 </fx:root>

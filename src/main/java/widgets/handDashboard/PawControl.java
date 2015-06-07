@@ -1,19 +1,19 @@
 package widgets.handDashboard;
 
 import com.leapmotion.leap.Finger;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.FloatProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import leap.LeapHand;
+import leap.gesture.LeapHand;
 
 import java.io.IOException;
 
@@ -21,6 +21,9 @@ import java.io.IOException;
  * Created by Richard on 6/6/2015.
  */
 public class PawControl extends VBox {
+    /*
+        Getter and Setter
+     */
 
     public boolean getIsLeftHand() {
         return isLeftHand.get();
@@ -46,17 +49,38 @@ public class PawControl extends VBox {
         this.circleRadius.set(circleRadius);
     }
 
+    public Paint getPawColor() {
+        return pawColor.get();
+    }
+
+    public ObjectProperty<Paint> pawColorProperty() {
+        return pawColor;
+    }
+
+    public void setPawColor(Paint pawColor) {
+        this.pawColor.set(pawColor);
+    }
+
+    /*
+        Properties
+     */
     @FXML
     private BooleanProperty isLeftHand = new SimpleBooleanProperty(true);
 
     @FXML
     private FloatProperty circleRadius = new SimpleFloatProperty(15);
 
+    @FXML
+    private final ObjectProperty<Paint> pawColor = new SimpleObjectProperty<Paint>(this, "pawColor", Color.RED);
+
+
+    /*
+        FXML
+     */
     private Circle index;
     private Circle middle;
     private Circle ring;
     private Circle pinky;
-
     @FXML
     private Circle finger1;
     @FXML
@@ -73,11 +97,30 @@ public class PawControl extends VBox {
     private Circle thumbRight;
     @FXML
     private Circle palm;
+
+    private Label indexLabel;
+    private Label middleLabel;
+    private Label ringLabel;
+    private Label pinkyLabel;
+    @FXML
+    private Label finger1Label;
+    @FXML
+    private Label finger2Label;
+    @FXML
+    private Label finger3Label;
+    @FXML
+    private Label finger4Label;
+
     @FXML
     private ImageView handGestureView;
     @FXML
     private Label handGestureLabel;
+    @FXML
+    private HBox fingerBox;
 
+    /*
+        Normal variables
+    */
     private ColorAdjust handGestureAdjust;
 
     private Image imageFist;
@@ -107,12 +150,61 @@ public class PawControl extends VBox {
     @FXML
     private void initialize() {
         handGestureAdjust = new ColorAdjust();
-        isLeftHand.addListener(observable -> {
-            refreshFingers(isLeftHand.get());
-        });
         refreshFingers(isLeftHand.get());
         loadImages();
         setHandImageView(imageFive, handGestureView, handGestureAdjust);
+
+        initListeners();
+    }
+
+    public void updatePaw(LeapHand hand){
+        // update finger visibility
+        setFingerVisibility(true);
+        hideMissingFingers(hand);
+        setFingerLength(hand);
+
+        // update hand gesture
+        updateGestureImage(hand);
+    }
+
+    private void initListeners(){
+        isLeftHand.addListener(observable -> {
+            refreshFingers(isLeftHand.get());
+        });
+
+        circleRadius.addListener((observable, oldValue, newValue) -> {
+            updateSizes(newValue.doubleValue());
+        });
+
+        pawColor.addListener((observable, oldValue, newValue) -> {
+            updatePawColor(newValue);
+        });
+    }
+
+    private void updatePawColor(Paint newColor){
+        palm.setFill(newColor);
+        finger1.setFill(newColor);
+        finger2.setFill(newColor);
+        finger3.setFill(newColor);
+        finger4.setFill(newColor);
+        thumbLeft.setFill(newColor);
+        thumbRight.setFill(newColor);
+    }
+
+    private void updateSizes(double newRadius){
+        double smallRadius = newRadius / 3;
+        double imageWidth = newRadius * 2;
+
+        palm.setRadius(newRadius);
+        finger1.setRadius(smallRadius);
+        finger2.setRadius(smallRadius);
+        finger3.setRadius(smallRadius);
+        finger4.setRadius(smallRadius);
+        thumbLeft.setRadius(smallRadius);
+        thumbRight.setRadius(smallRadius);
+        fingerBox.setSpacing(smallRadius);
+
+        handGestureView.setFitWidth(imageWidth);
     }
 
     private void loadImages(){
@@ -144,11 +236,21 @@ public class PawControl extends VBox {
             middle = finger3;
             ring = finger2;
             pinky = finger1;
+
+            indexLabel = finger4Label;
+            middleLabel = finger3Label;
+            ringLabel = finger2Label;
+            pinkyLabel = finger1Label;
         }else{
             index = finger1;
             middle = finger2;
             ring = finger3;
             pinky = finger4;
+
+            indexLabel = finger1Label;
+            middleLabel = finger2Label;
+            ringLabel = finger3Label;
+            pinkyLabel = finger4Label;
         }
         // gesture image view
         if(isLeftHand){
@@ -158,29 +260,56 @@ public class PawControl extends VBox {
         }
     }
 
-    public void updatePaw(LeapHand hand){
-        // update finger visibility
-        setFingerVisibility(true);
-        setFingers(hand);
-
-        // update hand gesture
-        updateGestureImage(hand);
+    private void setFingerLength(LeapHand hand){
+        for(Finger finger : hand.getFingers()){
+            switch (finger.type()){
+                case TYPE_INDEX:
+                    indexLabel.setText((int)finger.length()+"");
+                    break;
+                case TYPE_MIDDLE:
+                    middleLabel.setText((int)finger.length() + "");
+                    break;
+                case TYPE_RING:
+                    ringLabel.setText((int)finger.length() + "");
+                    break;
+                case TYPE_PINKY:
+                    pinkyLabel.setText((int)finger.length()+"");
+                    break;
+            }
+        }
     }
 
-    private void setFingers(LeapHand hand){
+    private void setFingerVisibility(boolean isVisible){
+        index.setVisible(isVisible);
+        middle.setVisible(isVisible);
+        ring.setVisible(isVisible);
+        pinky.setVisible(isVisible);
+        thumb.setVisible(isVisible);
+
+        indexLabel.setVisible(isVisible);
+        middleLabel.setVisible(isVisible);
+        ringLabel.setVisible(isVisible);
+        pinkyLabel.setVisible(isVisible);
+    }
+
+    private void hideMissingFingers(LeapHand hand){
         for(Finger.Type type : hand.getMissingFingers()){
             switch (type){
                 case TYPE_INDEX:
                     index.setVisible(false);
+                    indexLabel.setVisible(false);
                     break;
                 case TYPE_MIDDLE:
                     middle.setVisible(false);
+                    middleLabel.setVisible(false);
                     break;
                 case TYPE_RING:
                     ring.setVisible(false);
+                    ringLabel.setVisible(false);
                     break;
                 case TYPE_PINKY:
                     pinky.setVisible(false);
+                    pinkyLabel.setVisible(false);
                     break;
                 case TYPE_THUMB:
                     thumb.setVisible(false);
@@ -239,14 +368,6 @@ public class PawControl extends VBox {
                 handGestureLabel.setText("?");
                 break;
         }
-    }
-
-    private void setFingerVisibility(boolean isVisible){
-        index.setVisible(isVisible);
-        middle.setVisible(isVisible);
-        ring.setVisible(isVisible);
-        pinky.setVisible(isVisible);
-        thumb.setVisible(isVisible);
     }
 
     private ImageView setHandImageView(Image handImage, ImageView handImageView, ColorAdjust handColorAdjust){
