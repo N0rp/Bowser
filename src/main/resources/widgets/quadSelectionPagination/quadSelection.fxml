@@ -1,5 +1,11 @@
 <?import widgets.quadSelectionPagination.QuadSelectionPane?>
+<?import widgets.imagemagazine.ImageMagazineControl?>
 <QuadSelectionPane fx:controller="widgets.quadSelectionPagination.QuadSelectionController"
           xmlns:fx="http://javafx.com/fxml" fx:id="quadSelectionPane"
           styleClass="root">
+    <center>
+        <ImageMagazineControl>
+
+        </ImageMagazineControl>
+    </center>
 </QuadSelectionPane>

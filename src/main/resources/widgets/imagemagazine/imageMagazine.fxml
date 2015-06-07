@@ -1,0 +1,18 @@
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.StackPane?>
+<?import java.lang.Double?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.control.Label?>
+<?import org.controlsfx.control.SegmentedButton?>
+<?import javafx.scene.control.ToggleButton?>
+<fx:root type="javafx.scene.layout.VBox"
+          xmlns:fx="http://javafx.com/fxml">
+    <HBox>
+        <ImageView fx:id="centerImageView"/>
+    </HBox>
+</fx:root>

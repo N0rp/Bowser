@@ -115,7 +115,7 @@ public class HandDashboardControl extends VBox {
     }
 
     public void updateHand(LeapHand hand){
-        grabIndicator.setProgress(hand.getGrabStrenght());
+        grabIndicator.setProgress(hand.getGrabStrength());
         pinchIndicator.setProgress(hand.getPinchStrength());
         confidenceIndicator.setProgress(hand.getConfidence());
         rollAngle.setProgress(Math.abs(hand.getPalmRoll()));

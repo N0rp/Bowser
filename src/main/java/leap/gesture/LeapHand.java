@@ -31,7 +31,7 @@ public class LeapHand {
         return handState;
     }
 
-    public float getGrabStrenght() {
+    public float getGrabStrength() {
         return hand.grabStrength();
     }
 
