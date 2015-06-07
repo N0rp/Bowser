@@ -1,17 +1,16 @@
 package widgets.handDashboard;
 
 import com.leapmotion.leap.Finger;
-import com.leapmotion.leap.Hand;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import leap.LeapHand;
 
@@ -20,7 +19,7 @@ import java.io.IOException;
 /**
  * Created by Richard on 6/6/2015.
  */
-public class PawControl extends AnchorPane{
+public class PawControl extends VBox {
 
     public boolean getIsLeftHand() {
         return isLeftHand.get();
@@ -34,20 +33,37 @@ public class PawControl extends AnchorPane{
         return isLeftHand;
     }
 
-    private ColorAdjust handColorAdjust;
-    private ColorAdjust handGestureAdjust;
+    public float getCircleRadius() {
+        return circleRadius.get();
+    }
+
+    public FloatProperty circleRadiusProperty() {
+        return circleRadius;
+    }
+
+    public void setCircleRadius(float circleRadius) {
+        this.circleRadius.set(circleRadius);
+    }
 
     @FXML
     private BooleanProperty isLeftHand = new SimpleBooleanProperty(true);
 
     @FXML
+    private FloatProperty circleRadius = new SimpleFloatProperty(15);
+
     private Circle index;
-    @FXML
     private Circle middle;
-    @FXML
     private Circle ring;
-    @FXML
     private Circle pinky;
+
+    @FXML
+    private Circle finger1;
+    @FXML
+    private Circle finger2;
+    @FXML
+    private Circle finger3;
+    @FXML
+    private Circle finger4;
 
     private Circle thumb;
     @FXML
@@ -56,7 +72,16 @@ public class PawControl extends AnchorPane{
     private Circle thumbRight;
     @FXML
     private Circle palm;
+    @FXML
+    private ImageView handGestureView;
 
+    private ColorAdjust handGestureAdjust;
+
+    private Image imageFist;
+    private Image imagePinch;
+    private Image imageRock;
+    private Image imageOk;
+    private Image imageFive;
 
     public PawControl(){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/widgets/handDashboard/paw.fxml"));
@@ -73,15 +98,25 @@ public class PawControl extends AnchorPane{
 
     @FXML
     private void initialize() {
-        handColorAdjust = new ColorAdjust();
         handGestureAdjust = new ColorAdjust();
         isLeftHand.addListener(observable -> {
-            refreshActiveThumb(isLeftHand.get());
+            refreshFingers(isLeftHand.get());
         });
-        refreshActiveThumb(isLeftHand.get());
+        refreshFingers(isLeftHand.get());
+        loadImages();
+        setHandImageView(imageFive, handGestureView, handGestureAdjust);
     }
 
-    private void refreshActiveThumb(boolean isLeftHand){
+    private void loadImages(){
+        imagePinch = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Pinch.png"));
+        imageFist = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Knock.png"));
+        imageRock = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Rock-&-Roll.png"));
+        imageOk = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Okay.png"));
+        imageFive = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Number-5.png"));
+    }
+
+    private void refreshFingers(boolean isLeftHand){
+        // thumb
         thumb = thumbRight;
         Circle inactiveThumb = thumbLeft;
         if(!isLeftHand){
@@ -90,9 +125,22 @@ public class PawControl extends AnchorPane{
         }
         thumb.setVisible(true);
         inactiveThumb.setVisible(false);
+        // fingers
+        if(isLeftHand){
+            index = finger4;
+            middle = finger3;
+            ring = finger2;
+            pinky = finger1;
+        }else{
+            index = finger1;
+            middle = finger2;
+            ring = finger3;
+            pinky = finger4;
+        }
     }
 
     public void updatePaw(LeapHand hand){
+        // update finge visibility
         setFingerVisibility(true);
         for(Finger.Type type : hand.getMissingFingers()){
             switch (type){
@@ -113,6 +161,24 @@ public class PawControl extends AnchorPane{
                     break;
             }
         }
+        // update hand gesture
+        switch (hand.getHandState()){
+            case FIST:
+                handGestureView.setImage(imageFist);
+                break;
+            case PINCH:
+                handGestureView.setImage(imagePinch);
+                break;
+            case SIGN_OK:
+                handGestureView.setImage(imageOk);
+                break;
+            case SIGN_ROCK:
+                handGestureView.setImage(imageRock);
+                break;
+            default:
+                handGestureView.setImage(imageFive);
+                break;
+        }
     }
 
     private void setFingerVisibility(boolean isVisible){
@@ -121,6 +187,25 @@ public class PawControl extends AnchorPane{
         ring.setVisible(isVisible);
         pinky.setVisible(isVisible);
         thumb.setVisible(isVisible);
+    }
+
+    private ImageView setHandImageView(Image handImage, ImageView handImageView, ColorAdjust handColorAdjust){
+        // resizes the image to have width of 100 while preserving the ratio and using
+        // higher quality filtering method; this ImageView is also cached to
+        // improve performance
+        handColorAdjust.setContrast(1);
+        handColorAdjust.setHue(0.1);
+        handColorAdjust.setBrightness(1);
+        handColorAdjust.setSaturation(1);
+
+        handImageView.setImage(handImage);
+        handImageView.setFitWidth(palm.getRadius() * 2);
+        handImageView.setPreserveRatio(true);
+        handImageView.setSmooth(true);
+        handImageView.setCache(true);
+        handImageView.setEffect(handColorAdjust);
+
+        return handImageView;
     }
 
 

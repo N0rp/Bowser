@@ -146,6 +146,8 @@ public class LeapHand {
         LeapHandState handState = LeapHandState.NORMAL;
         if(!hand.isValid()){
             handState = LeapHandState.INVALID;
+        }else if(hand.grabStrength() >= 0.95){
+            handState = LeapHandState.FIST;
         }else if(hand.pinchStrength() >= 0.8 || missingFingers.size() > 0){
             handState = LeapHandState.SIGN;
             if(missingFingers.size() == 1){
@@ -155,9 +157,6 @@ public class LeapHand {
             }else if(areMissingFingers(true, Finger.Type.TYPE_THUMB, Finger.Type.TYPE_MIDDLE, Finger.Type.TYPE_RING)){
                 handState = LeapHandState.SIGN_ROCK;
             }
-        }else if(hand.grabStrength() >= 0.95){
-            handState = LeapHandState.FIST;
-        }else if(missingFingers.size() > 0){
         }
 
         return handState;

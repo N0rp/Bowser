@@ -1,16 +1,36 @@
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.shape.Circle?>
-<fx:root type="javafx.scene.layout.AnchorPane"
+<?import javafx.scene.layout.StackPane?>
+<?import java.lang.Double?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.paint.Color?>
+<fx:root type="javafx.scene.layout.VBox"
           xmlns:fx="http://javafx.com/fxml">
-    <Circle fx:id="index" radius="2" fill="red" centerX="5" centerY="0"></Circle>
-    <Circle fx:id="middle" radius="2" fill="red" centerX="10" centerY="0"></Circle>
-    <Circle fx:id="ring" radius="2" fill="red" centerX="15" centerY="0"></Circle>
-    <Circle fx:id="pinky" radius="2" fill="red" centerX="20" centerY="0"></Circle>
-    <Circle fx:id="thumbLeft" radius="2" fill="red" centerX="0" centerY="14"></Circle>
-    <Circle fx:id="thumbRight" radius="2" fill="red" centerX="28" centerY="14"></Circle>
-    <Circle fx:id="palm" radius="10" fill="red" centerX="14" centerY="15"></Circle>
+    <fx:define>
+        <Double fx:id="RADIUS_BIG" fx:value="15"/>
+        <Double fx:id="RADIUS_SMALL" fx:value="5"/>
+        <Color fx:id="COLOR" fx:value="red"/>
+    </fx:define>
+    <HBox spacing="5" alignment="CENTER">
+        <Circle fx:id="finger1" radius="$RADIUS_SMALL" fill="red"></Circle>
+        <Circle fx:id="finger2" radius="$RADIUS_SMALL" fill="red" ></Circle>
+        <Circle fx:id="finger3" radius="$RADIUS_SMALL" fill="red"></Circle>
+        <Circle fx:id="finger4" radius="$RADIUS_SMALL" fill="red"></Circle>
+    </HBox>
+    <HBox>
+        <VBox alignment="CENTER">
+            <Circle fx:id="thumbLeft" radius="$RADIUS_SMALL" fill="red"></Circle>
+        </VBox>
+        <StackPane translateX="5" translateY="5">
+            <Circle fx:id="palm" radius="$RADIUS_BIG" fill="red"></Circle>
+            <ImageView fx:id="handGestureView"></ImageView>
+        </StackPane>
+        <VBox alignment="CENTER">
+            <padding><Insets top="0" right="0" bottom="0" left="5"/></padding>
+            <Circle fx:id="thumbRight" radius="$RADIUS_SMALL" fill="red"></Circle>
+        </VBox>
+    </HBox>
 </fx:root>
