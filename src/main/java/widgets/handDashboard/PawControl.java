@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -74,6 +75,8 @@ public class PawControl extends VBox {
     private Circle palm;
     @FXML
     private ImageView handGestureView;
+    @FXML
+    private Label handGestureLabel;
 
     private ColorAdjust handGestureAdjust;
 
@@ -82,6 +85,11 @@ public class PawControl extends VBox {
     private Image imageRock;
     private Image imageOk;
     private Image imageFive;
+    private Image imageFour;
+    private Image imageThree;
+    private Image imageTwo;
+    private Image imageOne;
+    private Image imageThumbRight;
 
     public PawControl(){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/widgets/handDashboard/paw.fxml"));
@@ -113,6 +121,11 @@ public class PawControl extends VBox {
         imageRock = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Rock-&-Roll.png"));
         imageOk = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Okay.png"));
         imageFive = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Number-5.png"));
+        imageFour = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Number-4.png"));
+        imageThree = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Number-3.png"));
+        imageTwo = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Number-2.png"));
+        imageOne = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Number-1.png"));
+        imageThumbRight = new Image(getClass().getResourceAsStream("/icons/touchGestureIcons/Thumb-right.png"));
     }
 
     private void refreshFingers(boolean isLeftHand){
@@ -137,11 +150,24 @@ public class PawControl extends VBox {
             ring = finger3;
             pinky = finger4;
         }
+        // gesture image view
+        if(isLeftHand){
+            handGestureView.setScaleX(1);
+        }else{
+            handGestureView.setScaleX(-1);
+        }
     }
 
     public void updatePaw(LeapHand hand){
-        // update finge visibility
+        // update finger visibility
         setFingerVisibility(true);
+        setFingers(hand);
+
+        // update hand gesture
+        updateGestureImage(hand);
+    }
+
+    private void setFingers(LeapHand hand){
         for(Finger.Type type : hand.getMissingFingers()){
             switch (type){
                 case TYPE_INDEX:
@@ -161,7 +187,11 @@ public class PawControl extends VBox {
                     break;
             }
         }
-        // update hand gesture
+    }
+
+    private void updateGestureImage(LeapHand hand){
+        handGestureView.setVisible(true);
+        handGestureLabel.setVisible(false);
         switch (hand.getHandState()){
             case FIST:
                 handGestureView.setImage(imageFist);
@@ -175,8 +205,38 @@ public class PawControl extends VBox {
             case SIGN_ROCK:
                 handGestureView.setImage(imageRock);
                 break;
-            default:
+            case SIGN_VOTE_START:
+                handGestureView.setImage(imageThumbRight);
+                break;
+            case SIGN_ONE_MISSING:
+                handGestureView.setVisible(false);
+                handGestureLabel.setVisible(true);
+                handGestureLabel.setText(""+hand.getMissingFingers().get(0));
+                break;
+            case SIGN_NUMBER_FIVE:
                 handGestureView.setImage(imageFive);
+                break;
+            case SIGN_NUMBER_FOUR:
+                handGestureView.setImage(imageFour);
+                break;
+            case SIGN_NUMBER_THREE:
+                handGestureView.setImage(imageThree);
+                break;
+            case SIGN_NUMBER_TWO:
+                handGestureView.setImage(imageTwo);
+                break;
+            case SIGN_NUMBER_ONE:
+                handGestureView.setImage(imageOne);
+                break;
+            case INVALID:
+                handGestureView.setVisible(false);
+                handGestureLabel.setVisible(true);
+                handGestureLabel.setText("!");
+                break;
+            default:
+                handGestureView.setVisible(false);
+                handGestureLabel.setVisible(true);
+                handGestureLabel.setText("?");
                 break;
         }
     }

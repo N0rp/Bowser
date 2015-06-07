@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.control.Label?>
 <fx:root type="javafx.scene.layout.VBox"
           xmlns:fx="http://javafx.com/fxml">
     <fx:define>
@@ -27,6 +28,7 @@
         <StackPane translateX="5" translateY="5">
             <Circle fx:id="palm" radius="$RADIUS_BIG" fill="red"></Circle>
             <ImageView fx:id="handGestureView"></ImageView>
+            <Label fx:id="handGestureLabel" text="None"></Label>
         </StackPane>
         <VBox alignment="CENTER">
             <padding><Insets top="0" right="0" bottom="0" left="5"/></padding>

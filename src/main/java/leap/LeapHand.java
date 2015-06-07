@@ -148,15 +148,36 @@ public class LeapHand {
             handState = LeapHandState.INVALID;
         }else if(hand.grabStrength() >= 0.95){
             handState = LeapHandState.FIST;
+            if(missingFingers.size() == 4 && !missingFingers.contains(Finger.Type.TYPE_THUMB)){
+                handState = LeapHandState.SIGN_VOTE_START;
+            }
         }else if(hand.pinchStrength() >= 0.8 || missingFingers.size() > 0){
             handState = LeapHandState.SIGN;
             if(missingFingers.size() == 1){
                 handState = LeapHandState.SIGN_ONE_MISSING;
+                if(missingFingers.get(0).equals(Finger.Type.TYPE_THUMB)){
+                    handState = LeapHandState.SIGN_NUMBER_FOUR;
+                }
+
+            }else if(areMissingFingers(true, Finger.Type.TYPE_RING, Finger.Type.TYPE_PINKY)){
+                handState = LeapHandState.SIGN_NUMBER_THREE;
+            }else if(areMissingFingers(true, Finger.Type.TYPE_MIDDLE, Finger.Type.TYPE_RING, Finger.Type.TYPE_PINKY)){
+                handState = LeapHandState.SIGN_NUMBER_TWO;
+            }else if(areMissingFingers(true, Finger.Type.TYPE_THUMB, Finger.Type.TYPE_MIDDLE, Finger.Type.TYPE_RING, Finger.Type.TYPE_PINKY)){
+                handState = LeapHandState.SIGN_NUMBER_ONE;
+            }else if(areMissingFingers(true, Finger.Type.TYPE_RING, Finger.Type.TYPE_PINKY)){
+                handState = LeapHandState.SIGN_NUMBER_THREE;
             }else if(areMissingFingers(true, Finger.Type.TYPE_THUMB, Finger.Type.TYPE_INDEX)){
                 handState = LeapHandState.SIGN_OK;
             }else if(areMissingFingers(true, Finger.Type.TYPE_THUMB, Finger.Type.TYPE_MIDDLE, Finger.Type.TYPE_RING)){
                 handState = LeapHandState.SIGN_ROCK;
+            }else if(areMissingFingers(true, Finger.Type.TYPE_THUMB, Finger.Type.TYPE_MIDDLE, Finger.Type.TYPE_RING)){
+                handState = LeapHandState.SIGN_ROCK;
+            }else if(areMissingFingers(true, Finger.Type.TYPE_INDEX, Finger.Type.TYPE_MIDDLE, Finger.Type.TYPE_RING, Finger.Type.TYPE_PINKY)){
+                handState = LeapHandState.SIGN_VOTE_START;
             }
+        }else{
+            handState = LeapHandState.SIGN_NUMBER_FIVE;
         }
 
         return handState;
